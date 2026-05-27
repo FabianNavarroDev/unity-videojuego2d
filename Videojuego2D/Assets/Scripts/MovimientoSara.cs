@@ -4,73 +4,85 @@ using UnityEngine.InputSystem;
 public class MovimientoSara : MonoBehaviour
 {
     public float velocidad = 3f;
+    public float fuerzaSalto = 10f;
     public GameObject balaPrefab;
     public Transform puntoDisparo;
     private Animator animator;
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
+    private SpriteRenderer puntoDisparoSR;
     private Vector2 direccionDisparo = Vector2.right;
+    private bool estaEnSuelo = false;
 
     void Start()
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        puntoDisparoSR = puntoDisparo.GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
         float horizontal = 0f;
-        float vertical = 0f;
 
         if (Keyboard.current.rightArrowKey.isPressed || Keyboard.current.dKey.isPressed)
             horizontal = 1f;
         else if (Keyboard.current.leftArrowKey.isPressed || Keyboard.current.aKey.isPressed)
             horizontal = -1f;
 
-        if (Keyboard.current.upArrowKey.isPressed || Keyboard.current.wKey.isPressed)
-            vertical = 1f;
-        else if (Keyboard.current.downArrowKey.isPressed || Keyboard.current.sKey.isPressed)
-            vertical = -1f;
-
-        Vector2 movimiento = new Vector2(horizontal, vertical);
-        rb.linearVelocity = movimiento * velocidad;
+        rb.linearVelocity = new Vector2(horizontal * velocidad, rb.linearVelocity.y);
 
         if (horizontal > 0)
-        {
-            spriteRenderer.flipX = false;
-            direccionDisparo = Vector2.right;
-        }
-        else if (horizontal < 0)
-        {
-            spriteRenderer.flipX = true;
-            direccionDisparo = Vector2.left;
-        }
+{
+    spriteRenderer.flipX = false;
+    puntoDisparoSR.flipX = false;
+    puntoDisparo.localPosition = new Vector3(Mathf.Abs(puntoDisparo.localPosition.x), puntoDisparo.localPosition.y, 0);
+    direccionDisparo = Vector2.right;
+}
+else if (horizontal < 0)
+{
+    spriteRenderer.flipX = true;
+    puntoDisparoSR.flipX = true;
+    puntoDisparo.localPosition = new Vector3(-Mathf.Abs(puntoDisparo.localPosition.x), puntoDisparo.localPosition.y, 0);
+    direccionDisparo = Vector2.left;
+}
 
-        if (movimiento != Vector2.zero)
+        if (horizontal != 0)
             animator.SetBool("Caminando", true);
         else
             animator.SetBool("Caminando", false);
+
+        if ((Keyboard.current.upArrowKey.wasPressedThisFrame || Keyboard.current.wKey.wasPressedThisFrame) && estaEnSuelo)
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, fuerzaSalto);
 
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
             Disparar();
     }
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        estaEnSuelo = true;
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        estaEnSuelo = false;
+    }
+
     void Disparar()
-{
-    // Espejear posición del punto de disparo según dirección
-    Vector3 posicion = puntoDisparo.position;
-    if (direccionDisparo == Vector2.left)
-        posicion = new Vector3(transform.position.x - (puntoDisparo.localPosition.x), 
-                               puntoDisparo.position.y, 0);
+    {
+        float offsetX = puntoDisparo.position.x - transform.position.x;
+        Vector3 posicion = new Vector3(
+            transform.position.x + (direccionDisparo == Vector2.left ? -Mathf.Abs(offsetX) : Mathf.Abs(offsetX)),
+            puntoDisparo.position.y, 0);
 
-    GameObject nuevaBala = Instantiate(balaPrefab, posicion, Quaternion.identity);
-    
-    // Espejear sprite de la bala
-    SpriteRenderer balaSR = nuevaBala.GetComponent<SpriteRenderer>();
-    if (direccionDisparo == Vector2.left)
-        balaSR.flipX = true;
+        GameObject nuevaBala = Instantiate(balaPrefab, posicion, Quaternion.identity);
 
-    nuevaBala.GetComponent<Bala>().Inicializar(direccionDisparo);
-}
+        SpriteRenderer balaSR = nuevaBala.GetComponent<SpriteRenderer>();
+        if (direccionDisparo == Vector2.left)
+            balaSR.flipX = true;
+
+        nuevaBala.GetComponent<Bala>().Inicializar(direccionDisparo);
+    }
 }
