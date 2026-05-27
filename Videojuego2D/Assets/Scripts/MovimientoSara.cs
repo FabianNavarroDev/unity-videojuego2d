@@ -34,19 +34,19 @@ public class MovimientoSara : MonoBehaviour
         rb.linearVelocity = new Vector2(horizontal * velocidad, rb.linearVelocity.y);
 
         if (horizontal > 0)
-{
-    spriteRenderer.flipX = false;
-    puntoDisparoSR.flipX = false;
-    puntoDisparo.localPosition = new Vector3(Mathf.Abs(puntoDisparo.localPosition.x), puntoDisparo.localPosition.y, 0);
-    direccionDisparo = Vector2.right;
-}
-else if (horizontal < 0)
-{
-    spriteRenderer.flipX = true;
-    puntoDisparoSR.flipX = true;
-    puntoDisparo.localPosition = new Vector3(-Mathf.Abs(puntoDisparo.localPosition.x), puntoDisparo.localPosition.y, 0);
-    direccionDisparo = Vector2.left;
-}
+        {
+            spriteRenderer.flipX = false;
+            puntoDisparoSR.flipX = false;
+            puntoDisparo.localPosition = new Vector3(Mathf.Abs(puntoDisparo.localPosition.x), puntoDisparo.localPosition.y, 0);
+            direccionDisparo = Vector2.right;
+        }
+        else if (horizontal < 0)
+        {
+            spriteRenderer.flipX = true;
+            puntoDisparoSR.flipX = true;
+            puntoDisparo.localPosition = new Vector3(-Mathf.Abs(puntoDisparo.localPosition.x), puntoDisparo.localPosition.y, 0);
+            direccionDisparo = Vector2.left;
+        }
 
         if (horizontal != 0)
             animator.SetBool("Caminando", true);
@@ -54,7 +54,10 @@ else if (horizontal < 0)
             animator.SetBool("Caminando", false);
 
         if ((Keyboard.current.upArrowKey.wasPressedThisFrame || Keyboard.current.wKey.wasPressedThisFrame) && estaEnSuelo)
+        {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, fuerzaSalto);
+            animator.SetTrigger("Saltando");
+        }
 
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
             Disparar();
@@ -63,6 +66,7 @@ else if (horizontal < 0)
     void OnCollisionEnter2D(Collision2D collision)
     {
         estaEnSuelo = true;
+        
     }
 
     void OnCollisionExit2D(Collision2D collision)
