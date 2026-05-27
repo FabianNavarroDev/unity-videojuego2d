@@ -5,6 +5,7 @@ public class MovimientoSara : MonoBehaviour
 {
     public float velocidad = 3f;
     public float fuerzaSalto = 10f;
+    public float cooldownDisparo = 0.3f;
     public GameObject balaPrefab;
     public Transform puntoDisparo;
     private Animator animator;
@@ -13,6 +14,7 @@ public class MovimientoSara : MonoBehaviour
     private SpriteRenderer puntoDisparoSR;
     private Vector2 direccionDisparo = Vector2.right;
     private bool estaEnSuelo = false;
+    private float tiempoUltimoDisparo = 0f;
 
     void Start()
     {
@@ -59,14 +61,13 @@ public class MovimientoSara : MonoBehaviour
             animator.SetTrigger("Saltando");
         }
 
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        if (Keyboard.current.spaceKey.wasPressedThisFrame && Time.time >= tiempoUltimoDisparo + cooldownDisparo)
             Disparar();
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
         estaEnSuelo = true;
-        
     }
 
     void OnCollisionExit2D(Collision2D collision)
@@ -76,6 +77,8 @@ public class MovimientoSara : MonoBehaviour
 
     void Disparar()
     {
+        tiempoUltimoDisparo = Time.time;
+
         float offsetX = puntoDisparo.position.x - transform.position.x;
         Vector3 posicion = new Vector3(
             transform.position.x + (direccionDisparo == Vector2.left ? -Mathf.Abs(offsetX) : Mathf.Abs(offsetX)),

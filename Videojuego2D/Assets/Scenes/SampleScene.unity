@@ -322,8 +322,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40c6a5077a61b104ab39e65445050517, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovimientoSara
-  velocidad: 3
-  fuerzaSalto: 10
+  velocidad: 6
+  fuerzaSalto: 12
+  cooldownDisparo: 0.5
   balaPrefab: {fileID: 3688598536501748056, guid: 9cffbea7429348f49b93b22bbd4a254d, type: 3}
   puntoDisparo: {fileID: 1052713004}
 --- !u!1 &519420028
