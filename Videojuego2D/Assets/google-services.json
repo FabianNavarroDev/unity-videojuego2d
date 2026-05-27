@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "983550883248",
+    "project_id": "videojuegosara-a8bca",
+    "storage_bucket": "videojuegosara-a8bca.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:983550883248:android:be50cb2ced0a387e169275",
+        "android_client_info": {
+          "package_name": "com.ricksiker.videojuegosara"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZERA3V-oT8ecbvkiAVRN_RFbMlx1TqIE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
